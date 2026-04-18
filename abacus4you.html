@@ -1,0 +1,1994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abacus4You — Math Mastery Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a3e;
+    --accent: #f0a500;
+    --accent2: #e05c2a;
+    --accent3: #2af0a5;
+    --text: #f0eff6;
+    --text-muted: #7b7a96;
+    --danger: #f04444;
+    --success: #2af0a5;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity: 0.3;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top:0; left:0; right:0;
+    background: rgba(10,10,15,0.88);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+    padding: 0 24px;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.3rem;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+  }
+  .nav-logo span { color: var(--text); }
+  .nav-links {
+    display: flex; gap:8px; align-items: center;
+  }
+  .nav-links button {
+    background:none; border:none; color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size:.875rem; cursor:pointer; padding:8px 14px;
+    border-radius:var(--radius-sm); transition: all .2s;
+  }
+  .nav-links button:hover, .nav-links button.active {
+    background: var(--surface2); color: var(--text);
+  }
+  .nav-links button.cta {
+    background: var(--accent); color: #000;
+    font-weight:600;
+  }
+  .hamburger {
+    display:none; background:none; border:none;
+    cursor:pointer; padding:8px; color:var(--text);
+    flex-direction:column; gap:5px;
+  }
+  .hamburger span {
+    display:block; width:24px; height:2px;
+    background:var(--text); border-radius:2px;
+    transition: all .3s;
+  }
+  .mobile-menu {
+    display:none; position:fixed; top:64px; left:0; right:0; bottom:0;
+    background: rgba(10,10,15,0.97);
+    flex-direction:column; align-items:center; justify-content:center;
+    gap:16px; z-index:99;
+  }
+  .mobile-menu.open { display:flex; }
+  .mobile-menu button {
+    background:none; border:none; color:var(--text);
+    font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:700;
+    cursor:pointer; padding:12px 32px; border-radius:var(--radius);
+    transition:all .2s;
+  }
+  .mobile-menu button:hover { background:var(--surface2); }
+
+  /* ── PAGES ── */
+  .page { display:none; padding-top:64px; min-height:100vh; position:relative; z-index:1; }
+  .page.active { display:block; }
+
+  /* ── HOME ── */
+  .hero {
+    min-height: calc(100vh - 64px);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:40px 24px;
+  }
+  .hero-badge {
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--surface2); border:1px solid var(--border);
+    padding:6px 16px; border-radius:100px; font-size:.8rem;
+    color:var(--accent); font-weight:500; margin-bottom:24px;
+    animation: fadeUp .6s ease both;
+  }
+  .hero-badge::before { content:'✦'; font-size:.7rem; }
+  .hero h1 {
+    font-family:'Syne',sans-serif; font-weight:800;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    line-height:1.05; letter-spacing:-2px;
+    animation: fadeUp .6s ease .1s both;
+  }
+  .hero h1 em { color:var(--accent); font-style:normal; }
+  .hero p {
+    font-size:1.1rem; color:var(--text-muted); max-width:520px;
+    margin:20px auto 36px; line-height:1.7;
+    animation: fadeUp .6s ease .2s both;
+  }
+  .hero-btns {
+    display:flex; gap:12px; flex-wrap:wrap; justify-content:center;
+    animation: fadeUp .6s ease .3s both;
+  }
+  .btn { display:inline-flex; align-items:center; gap:8px; padding:14px 28px;
+    border-radius:var(--radius); font-family:'DM Sans',sans-serif;
+    font-weight:600; font-size:.95rem; cursor:pointer; border:none;
+    transition: all .25s; text-decoration:none; }
+  .btn-primary { background:var(--accent); color:#000; }
+  .btn-primary:hover { background:#ffc130; transform:translateY(-2px); }
+  .btn-ghost { background:var(--surface2); color:var(--text); border:1px solid var(--border); }
+  .btn-ghost:hover { background:var(--surface); }
+  .btn-danger { background:var(--danger); color:#fff; }
+  .btn-success { background:var(--success); color:#000; }
+  .btn-sm { padding:9px 18px; font-size:.85rem; }
+
+  .stats-row {
+    display:flex; gap:24px; flex-wrap:wrap; justify-content:center;
+    margin-top:64px; animation: fadeUp .6s ease .4s both;
+  }
+  .stat-card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius); padding:24px 32px; text-align:center;
+    min-width:120px;
+  }
+  .stat-card .num {
+    font-family:'Syne',sans-serif; font-size:2rem; font-weight:800;
+    color:var(--accent);
+  }
+  .stat-card .lbl { font-size:.8rem; color:var(--text-muted); margin-top:4px; }
+
+  /* feature cards */
+  .section { padding:80px 24px; max-width:1100px; margin:0 auto; }
+  .section-title {
+    font-family:'Syne',sans-serif; font-size:2rem; font-weight:800;
+    letter-spacing:-1px; margin-bottom:8px;
+  }
+  .section-sub { color:var(--text-muted); margin-bottom:40px; }
+
+  .cards-grid {
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr));
+    gap:16px;
+  }
+  .card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius); padding:24px;
+    transition:all .25s; cursor:pointer;
+  }
+  .card:hover { border-color:var(--accent); transform:translateY(-3px); box-shadow:0 12px 40px rgba(240,165,0,.15); }
+  .card-icon { font-size:2rem; margin-bottom:16px; }
+  .card h3 { font-family:'Syne',sans-serif; font-weight:700; margin-bottom:8px; }
+  .card p { font-size:.875rem; color:var(--text-muted); line-height:1.6; }
+  .card-tag {
+    display:inline-block; margin-top:12px; padding:3px 10px;
+    background:var(--surface2); border-radius:100px;
+    font-size:.75rem; color:var(--accent);
+  }
+
+  /* ── ARENA ── */
+  .arena-container { max-width:800px; margin:0 auto; padding:40px 24px; }
+  .arena-header { margin-bottom:32px; }
+  .ops-grid {
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(140px,1fr));
+    gap:12px; margin-bottom:32px;
+  }
+  .op-btn {
+    background:var(--surface); border:2px solid var(--border);
+    border-radius:var(--radius); padding:20px 12px;
+    text-align:center; cursor:pointer; transition:all .2s;
+    color:var(--text); font-family:'DM Sans',sans-serif;
+  }
+  .op-btn:hover, .op-btn.selected {
+    border-color:var(--accent); background:var(--surface2);
+    box-shadow:0 0 0 4px rgba(240,165,0,.1);
+  }
+  .op-btn .op-icon { font-size:1.6rem; margin-bottom:8px; display:block; }
+  .op-btn .op-name { font-size:.875rem; font-weight:500; }
+
+  /* Settings Panel */
+  .settings-panel {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius); padding:24px; margin-bottom:24px;
+  }
+  .settings-panel h3 {
+    font-family:'Syne',sans-serif; font-weight:700;
+    margin-bottom:20px; font-size:1.1rem;
+  }
+  .settings-row {
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(180px,1fr));
+    gap:16px;
+  }
+  .field { display:flex; flex-direction:column; gap:6px; }
+  .field label { font-size:.8rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; }
+  .field input, .field select {
+    background:var(--surface2); border:1px solid var(--border);
+    border-radius:var(--radius-sm); padding:10px 14px;
+    color:var(--text); font-family:'DM Sans',sans-serif; font-size:.9rem;
+    outline:none; transition:border .2s;
+  }
+  .field input:focus, .field select:focus { border-color:var(--accent); }
+  .field input[type=range] {
+    padding:6px 0; background:none; border:none;
+    accent-color:var(--accent);
+  }
+
+  /* Quiz Screen */
+  .quiz-screen { display:none; text-align:center; }
+  .quiz-screen.active { display:block; }
+  .quiz-header {
+    display:flex; align-items:center; justify-content:space-between;
+    background:var(--surface); border-radius:var(--radius);
+    padding:16px 24px; margin-bottom:32px;
+  }
+  .quiz-stat { text-align:center; }
+  .quiz-stat .val { font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:800; }
+  .quiz-stat .key { font-size:.75rem; color:var(--text-muted); margin-top:2px; }
+  .progress-bar {
+    width:100%; height:4px; background:var(--border);
+    border-radius:2px; overflow:hidden; margin-bottom:32px;
+  }
+  .progress-fill {
+    height:100%; background:linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius:2px; transition:width .3s;
+  }
+  .question-box {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:20px; padding:40px 24px; margin-bottom:32px;
+    position:relative; overflow:hidden;
+  }
+  .question-box::before {
+    content:'';position:absolute;top:-40px;right:-40px;
+    width:120px;height:120px;background:var(--accent);
+    border-radius:50%;opacity:.05;
+  }
+  .question-label { font-size:.85rem; color:var(--text-muted); margin-bottom:16px; }
+  .question-text {
+    font-family:'Syne',sans-serif; font-size:clamp(2rem,6vw,3.5rem);
+    font-weight:800; letter-spacing:-2px; line-height:1.1;
+  }
+  .flash-number {
+    font-family:'Syne',sans-serif; font-size:clamp(3rem,10vw,6rem);
+    font-weight:800; color:var(--accent);
+    animation: flashIn .15s ease;
+  }
+  @keyframes flashIn {
+    from { opacity:0; transform:scale(1.2); }
+    to { opacity:1; transform:scale(1); }
+  }
+  .answer-input {
+    width:100%; max-width:320px; margin:0 auto;
+    background:var(--surface); border:2px solid var(--border);
+    border-radius:var(--radius); padding:18px 24px;
+    color:var(--text); font-family:'Syne',sans-serif;
+    font-size:1.5rem; font-weight:700; text-align:center;
+    outline:none; transition:border .2s; display:block;
+  }
+  .answer-input:focus { border-color:var(--accent); }
+  .answer-input.correct { border-color:var(--success); background:rgba(42,240,165,.1); }
+  .answer-input.wrong { border-color:var(--danger); background:rgba(240,68,68,.1); }
+  .feedback {
+    font-size:1rem; margin-top:12px; font-weight:600;
+    min-height:24px; transition:all .2s;
+  }
+  .feedback.correct { color:var(--success); }
+  .feedback.wrong { color:var(--danger); }
+
+  /* Results */
+  .results-screen { display:none; text-align:center; padding:40px 0; }
+  .results-screen.active { display:block; }
+  .results-score {
+    font-family:'Syne',sans-serif; font-size:5rem; font-weight:800;
+    color:var(--accent); line-height:1;
+  }
+  .results-grade { font-size:1.2rem; color:var(--text-muted); margin:8px 0 32px; }
+  .results-grid {
+    display:grid; grid-template-columns:repeat(2,1fr); gap:12px;
+    max-width:400px; margin:0 auto 32px;
+  }
+  .result-item {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius-sm); padding:16px;
+  }
+  .result-item .r-val { font-family:'Syne',sans-serif; font-weight:700; font-size:1.3rem; }
+  .result-item .r-key { font-size:.75rem; color:var(--text-muted); }
+
+  /* ── COMPETITION ── */
+  .comp-container { max-width:900px; margin:0 auto; padding:40px 24px; }
+  .comp-header-bar {
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:12px; margin-bottom:32px;
+  }
+  .live-badge {
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(240,68,68,.15); border:1px solid var(--danger);
+    border-radius:100px; padding:4px 12px; font-size:.8rem; color:var(--danger);
+    font-weight:600;
+  }
+  .live-badge::before {
+    content:''; width:7px; height:7px; border-radius:50%;
+    background:var(--danger); animation:pulse 1.2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  .leaderboard {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius); overflow:hidden;
+  }
+  .lb-head {
+    display:grid; grid-template-columns:48px 1fr 80px 80px 80px;
+    gap:12px; padding:14px 20px;
+    background:var(--surface2); border-bottom:1px solid var(--border);
+    font-size:.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px;
+  }
+  .lb-row {
+    display:grid; grid-template-columns:48px 1fr 80px 80px 80px;
+    gap:12px; padding:16px 20px;
+    border-bottom:1px solid var(--border);
+    align-items:center; transition:background .2s;
+    animation: slideIn .3s ease both;
+  }
+  .lb-row:last-child { border-bottom:none; }
+  .lb-row:hover { background:var(--surface2); }
+  @keyframes slideIn { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
+  .rank-badge {
+    width:32px; height:32px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Syne',sans-serif; font-weight:800; font-size:.85rem;
+  }
+  .rank-1 { background:linear-gradient(135deg,#f0a500,#ffd700); color:#000; }
+  .rank-2 { background:linear-gradient(135deg,#9ba3af,#d1d5db); color:#000; }
+  .rank-3 { background:linear-gradient(135deg,#cd7c2f,#e8a56d); color:#000; }
+  .rank-other { background:var(--surface2); color:var(--text-muted); }
+  .player-name { font-weight:500; }
+  .player-sub { font-size:.75rem; color:var(--text-muted); }
+  .score-val { font-family:'Syne',sans-serif; font-weight:700; color:var(--accent); }
+  .time-val { font-size:.875rem; color:var(--text-muted); }
+  .acc-pill {
+    display:inline-block; padding:3px 8px; border-radius:100px;
+    font-size:.75rem; font-weight:600;
+  }
+  .acc-high { background:rgba(42,240,165,.15); color:var(--success); }
+  .acc-mid { background:rgba(240,165,0,.15); color:var(--accent); }
+  .acc-low { background:rgba(240,68,68,.15); color:var(--danger); }
+
+  /* join competition form */
+  .join-form {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius); padding:28px;
+    max-width:420px; margin:0 auto 32px;
+  }
+  .join-form h3 { font-family:'Syne',sans-serif; font-weight:700; margin-bottom:20px; }
+
+  /* ── ADMIN ── */
+  .admin-container { max-width:1100px; margin:0 auto; padding:40px 24px; }
+  .admin-tabs {
+    display:flex; gap:4px; margin-bottom:28px; flex-wrap:wrap;
+    background:var(--surface); border-radius:var(--radius); padding:6px;
+    border:1px solid var(--border);
+  }
+  .tab-btn {
+    flex:1; min-width:100px; padding:10px 16px;
+    background:none; border:none; border-radius:var(--radius-sm);
+    color:var(--text-muted); font-family:'DM Sans',sans-serif;
+    font-size:.875rem; cursor:pointer; transition:all .2s;
+  }
+  .tab-btn.active { background:var(--surface2); color:var(--text); font-weight:600; }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
+
+  .admin-table {
+    width:100%; border-collapse:collapse;
+  }
+  .admin-table th {
+    background:var(--surface2); padding:12px 16px; text-align:left;
+    font-size:.75rem; color:var(--text-muted); text-transform:uppercase;
+    letter-spacing:.5px; border-bottom:1px solid var(--border);
+  }
+  .admin-table td {
+    padding:14px 16px; border-bottom:1px solid var(--border);
+    font-size:.875rem;
+  }
+  .admin-table tr:hover td { background:var(--surface2); }
+  .status-pill {
+    display:inline-block; padding:3px 10px; border-radius:100px; font-size:.75rem; font-weight:600;
+  }
+  .status-active { background:rgba(42,240,165,.15); color:var(--success); }
+  .status-inactive { background:rgba(123,122,150,.15); color:var(--text-muted); }
+
+  .summary-cards {
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr));
+    gap:16px; margin-bottom:28px;
+  }
+  .summary-card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius); padding:22px;
+    position:relative; overflow:hidden;
+  }
+  .summary-card::after {
+    content:''; position:absolute; top:-20px; right:-20px;
+    width:80px; height:80px; border-radius:50%;
+    opacity:.15;
+  }
+  .summary-card.accent::after { background:var(--accent); }
+  .summary-card.green::after { background:var(--success); }
+  .summary-card.red::after { background:var(--danger); }
+  .summary-card.blue::after { background:#4a9ef0; }
+  .sc-icon { font-size:1.4rem; margin-bottom:12px; }
+  .sc-num { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; }
+  .sc-lbl { font-size:.8rem; color:var(--text-muted); margin-top:4px; }
+
+  /* ── ABACUS TOOL ── */
+  .abacus-container { max-width:700px; margin:0 auto; padding:40px 24px; text-align:center; }
+  .abacus-frame {
+    background:var(--surface); border:2px solid var(--border);
+    border-radius:20px; padding:32px 24px; margin:0 auto;
+    position:relative; overflow:hidden;
+  }
+  .abacus-rod-row {
+    display:flex; gap:12px; justify-content:center;
+    margin-bottom:20px;
+  }
+  .abacus-rod {
+    display:flex; flex-direction:column; align-items:center;
+    gap:4px; cursor:pointer;
+  }
+  .abacus-bead {
+    width:36px; height:24px; border-radius:50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    transition: all .2s ease;
+    box-shadow: 0 2px 8px rgba(240,165,0,.3);
+    border: 1px solid rgba(255,255,255,.15);
+  }
+  .abacus-bead.off {
+    background: var(--surface2);
+    box-shadow: none;
+    border-color: var(--border);
+  }
+  .rod-separator {
+    width:100%; height:2px; background:var(--border);
+    border-radius:2px; margin:8px 0;
+  }
+  .rod-label {
+    font-family:'Syne',sans-serif; font-size:.75rem;
+    color:var(--text-muted); font-weight:700;
+  }
+  .abacus-display {
+    font-family:'Syne',sans-serif; font-size:2.5rem; font-weight:800;
+    color:var(--accent); margin-bottom:20px; min-height:60px;
+    letter-spacing:-1px;
+  }
+  .abacus-controls { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+
+  /* ── COURSES ── */
+  .courses-container { max-width:900px; margin:0 auto; padding:40px 24px; }
+  .course-card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius); padding:24px; margin-bottom:16px;
+    display:flex; gap:20px; align-items:flex-start; cursor:pointer;
+    transition:all .25s;
+  }
+  .course-card:hover { border-color:var(--accent); transform:translateX(4px); }
+  .course-icon {
+    width:52px; height:52px; border-radius:var(--radius);
+    background:var(--surface2); display:flex; align-items:center;
+    justify-content:center; font-size:1.5rem; flex-shrink:0;
+  }
+  .course-info h3 { font-family:'Syne',sans-serif; font-weight:700; margin-bottom:6px; }
+  .course-info p { font-size:.875rem; color:var(--text-muted); line-height:1.6; }
+  .course-meta {
+    display:flex; gap:12px; margin-top:12px; flex-wrap:wrap;
+  }
+  .meta-tag {
+    padding:3px 10px; background:var(--surface2);
+    border-radius:100px; font-size:.75rem; color:var(--text-muted);
+  }
+  .course-progress {
+    margin-top:12px;
+  }
+  .course-progress-bar {
+    height:4px; background:var(--border); border-radius:2px; overflow:hidden;
+  }
+  .course-progress-fill {
+    height:100%; background:linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius:2px;
+  }
+  .progress-label { font-size:.75rem; color:var(--text-muted); margin-top:4px; }
+
+  /* ── DASHBOARD ── */
+  .dash-container { max-width:1000px; margin:0 auto; padding:40px 24px; }
+  .dash-greeting {
+    font-family:'Syne',sans-serif; font-size:1.75rem; font-weight:800;
+    margin-bottom:4px;
+  }
+  .dash-sub { color:var(--text-muted); margin-bottom:32px; }
+  .dash-grid {
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr));
+    gap:16px; margin-bottom:32px;
+  }
+  .dash-card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius); padding:22px;
+  }
+  .dash-card h4 { font-size:.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; margin-bottom:8px; }
+  .dash-card .big { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; }
+  .dash-card .change { font-size:.8rem; margin-top:4px; }
+  .change.up { color:var(--success); }
+  .change.down { color:var(--danger); }
+
+  .activity-feed { list-style:none; }
+  .activity-item {
+    display:flex; gap:14px; align-items:flex-start;
+    padding:16px 0; border-bottom:1px solid var(--border);
+  }
+  .activity-item:last-child { border-bottom:none; }
+  .activity-dot {
+    width:10px; height:10px; border-radius:50%; margin-top:5px;
+    flex-shrink:0;
+  }
+  .activity-dot.gold { background:var(--accent); }
+  .activity-dot.green { background:var(--success); }
+  .activity-dot.red { background:var(--danger); }
+  .activity-text { font-size:.875rem; }
+  .activity-time { font-size:.75rem; color:var(--text-muted); margin-top:3px; }
+
+  /* ── MODALS ── */
+  .modal-overlay {
+    display:none; position:fixed; inset:0;
+    background:rgba(0,0,0,.7); backdrop-filter:blur(8px);
+    z-index:200; align-items:center; justify-content:center; padding:24px;
+  }
+  .modal-overlay.open { display:flex; }
+  .modal {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:20px; padding:32px; width:100%; max-width:480px;
+    animation: modalIn .3s ease;
+  }
+  @keyframes modalIn { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+  .modal h2 { font-family:'Syne',sans-serif; font-weight:800; margin-bottom:6px; }
+  .modal p { color:var(--text-muted); margin-bottom:24px; font-size:.9rem; }
+  .modal-close {
+    float:right; background:none; border:none; color:var(--text-muted);
+    font-size:1.3rem; cursor:pointer; margin-top:-4px;
+  }
+
+  /* ── GOOGLE SHEETS INFO ── */
+  .gs-info {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius); padding:24px; margin-top:24px;
+  }
+  .gs-info h3 { font-family:'Syne',sans-serif; font-weight:700; margin-bottom:12px; }
+  .gs-info p { font-size:.875rem; color:var(--text-muted); line-height:1.7; }
+  code {
+    background:var(--surface2); padding:2px 8px; border-radius:4px;
+    font-size:.8rem; color:var(--accent); font-family:monospace;
+  }
+  pre {
+    background:var(--surface2); border:1px solid var(--border);
+    border-radius:var(--radius-sm); padding:16px;
+    font-size:.8rem; color:var(--accent3); overflow-x:auto;
+    font-family:monospace; line-height:1.6; margin-top:12px;
+  }
+
+  /* ── NOTIFICATION TOAST ── */
+  .toast {
+    position:fixed; bottom:24px; right:24px; z-index:300;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius); padding:16px 20px;
+    display:flex; align-items:center; gap:12px;
+    box-shadow:var(--shadow);
+    transform:translateY(100px); transition:transform .3s ease;
+    max-width:320px;
+  }
+  .toast.show { transform:translateY(0); }
+  .toast-icon { font-size:1.2rem; }
+  .toast-text { font-size:.875rem; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(20px); }
+    to { opacity:1; transform:translateY(0); }
+  }
+  @keyframes spin {
+    to { transform:rotate(360deg); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width:768px) {
+    .nav-links { display:none; }
+    .hamburger { display:flex; }
+    .lb-head { grid-template-columns:40px 1fr 60px 60px; }
+    .lb-row { grid-template-columns:40px 1fr 60px 60px; }
+    .lb-head > :last-child, .lb-row > :last-child { display:none; }
+    .hero h1 { font-size:2.6rem; }
+    .settings-row { grid-template-columns:1fr 1fr; }
+    .course-card { flex-direction:column; }
+    .admin-tabs { overflow-x:auto; }
+  }
+  @media (max-width:480px) {
+    nav { padding:0 16px; }
+    .ops-grid { grid-template-columns:repeat(3,1fr); }
+    .settings-row { grid-template-columns:1fr; }
+    .results-grid { grid-template-columns:1fr 1fr; }
+    .abacus-bead { width:28px; height:20px; }
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+  /* Input registration form */
+  .reg-form { display:flex; flex-direction:column; gap:14px; }
+  .input-group { display:flex; flex-direction:column; gap:6px; }
+  .input-group label { font-size:.8rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:.5px; }
+  .input-group input, .input-group select {
+    background:var(--surface2); border:1px solid var(--border);
+    border-radius:var(--radius-sm); padding:12px 16px;
+    color:var(--text); font-family:'DM Sans',sans-serif; font-size:.9rem;
+    outline:none; transition:border .2s;
+  }
+  .input-group input:focus, .input-group select:focus { border-color:var(--accent); }
+
+  /* spinner */
+  .spinner {
+    width:20px;height:20px;border:2px solid var(--border);
+    border-top-color:var(--accent);border-radius:50%;
+    animation:spin .8s linear infinite;display:inline-block;
+  }
+
+  /* Timer ring */
+  .timer-ring {
+    position:relative;width:80px;height:80px;
+    display:inline-flex;align-items:center;justify-content:center;
+  }
+  .timer-ring svg { position:absolute;top:0;left:0;transform:rotate(-90deg); }
+  .timer-ring circle { fill:none;stroke-width:4; }
+  .timer-ring .bg { stroke:var(--border); }
+  .timer-ring .fg { stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset .1s; }
+  .timer-ring .num {
+    font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;
+    position:relative;z-index:1;
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Abacus<span>4You</span></div>
+  <div class="nav-links">
+    <button onclick="showPage('home')" class="active" id="nav-home">Home</button>
+    <button onclick="showPage('arena')" id="nav-arena">Arena</button>
+    <button onclick="showPage('competition')" id="nav-competition">Competition</button>
+    <button onclick="showPage('courses')" id="nav-courses">Courses</button>
+    <button onclick="showPage('abacus')" id="nav-abacus">Abacus</button>
+    <button onclick="showPage('dashboard')" id="nav-dashboard">Dashboard</button>
+    <button onclick="showPage('admin')" id="nav-admin">Admin</button>
+    <button class="cta btn" onclick="openModal('registerModal')">Join Free</button>
+  </div>
+  <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <button onclick="showPage('home');toggleMenu()">Home</button>
+  <button onclick="showPage('arena');toggleMenu()">Arena</button>
+  <button onclick="showPage('competition');toggleMenu()">Competition</button>
+  <button onclick="showPage('courses');toggleMenu()">Courses</button>
+  <button onclick="showPage('abacus');toggleMenu()">Abacus</button>
+  <button onclick="showPage('dashboard');toggleMenu()">Dashboard</button>
+  <button onclick="showPage('admin');toggleMenu()">Admin</button>
+  <button onclick="openModal('registerModal');toggleMenu()" style="color:var(--accent)">Join Free ✦</button>
+</div>
+
+<!-- ════════════════════════════════ HOME ════════════════════════════════ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-badge">✦ Math Mastery Platform</div>
+    <h1>Train Your Mind.<br><em>Master Numbers.</em></h1>
+    <p>The complete abacus & mental math training platform. Compete daily, track progress, and become a calculation champion.</p>
+    <div class="hero-btns">
+      <button class="btn btn-primary" onclick="showPage('arena')">🎯 Start Training</button>
+      <button class="btn btn-ghost" onclick="showPage('competition')">🏆 Join Competition</button>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="num" id="stat-users">2,847</div><div class="lbl">Active Students</div></div>
+      <div class="stat-card"><div class="num" id="stat-comps">143</div><div class="lbl">Competitions Today</div></div>
+      <div class="stat-card"><div class="num" id="stat-qs">1.2M+</div><div class="lbl">Questions Solved</div></div>
+      <div class="stat-card"><div class="num" id="stat-speed">0.4s</div><div class="lbl">Best Flash Speed</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">All Operations</div>
+    <div class="section-sub">Choose any math operation to practice</div>
+    <div class="cards-grid" id="homeOpCards"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Why Abacus4You?</div>
+    <div class="section-sub">Built for speed, accuracy, and real competition</div>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h3>Flash Training</h3>
+        <p>Numbers flash at configurable speeds — from 2 seconds down to 0.1 seconds — training mental visualization.</p>
+        <span class="card-tag">Speed</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏆</div>
+        <h3>Live Competitions</h3>
+        <p>Real-time leaderboards updated instantly. Compete with students worldwide and track rankings.</p>
+        <span class="card-tag">Real-time</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h3>Detailed Analytics</h3>
+        <p>Track accuracy, speed improvement, and session history. Google Sheets integration for data persistence.</p>
+        <span class="card-tag">Insights</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎓</div>
+        <h3>Structured Courses</h3>
+        <p>Curriculum-aligned levels from beginner to master, covering all abacus and mental math techniques.</p>
+        <span class="card-tag">Learning</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════ ARENA ════════════════════════════════ -->
+<div class="page" id="page-arena">
+  <div class="arena-container">
+    <div class="arena-header">
+      <h1 style="font-family:Syne;font-size:2rem;font-weight:800;margin-bottom:4px">Practice Arena</h1>
+      <p style="color:var(--text-muted)">Choose an operation and configure your training session</p>
+    </div>
+
+    <!-- Setup Screen -->
+    <div id="arena-setup">
+      <div class="ops-grid" id="arenaOpsGrid"></div>
+      <div class="settings-panel" id="settingsPanel">
+        <h3>⚙️ Session Settings <span id="selectedOpLabel" style="color:var(--accent);font-size:.9rem;"></span></h3>
+        <div class="settings-row">
+          <div class="field">
+            <label>Min Value</label>
+            <input type="number" id="minVal" value="1" min="0">
+          </div>
+          <div class="field">
+            <label>Max Value</label>
+            <input type="number" id="maxVal" value="99" min="1">
+          </div>
+          <div class="field">
+            <label>Questions</label>
+            <input type="number" id="numQuestions" value="10" min="1" max="100">
+          </div>
+          <div class="field">
+            <label>Time Limit (sec)</label>
+            <input type="number" id="timeLimit" value="30" min="5">
+          </div>
+          <div class="field" id="flashSpeedField">
+            <label>Flash Speed (sec): <span id="flashSpeedVal">1.0</span></label>
+            <input type="range" id="flashSpeed" min="0.1" max="3" step="0.1" value="1.0"
+              oninput="document.getElementById('flashSpeedVal').textContent=parseFloat(this.value).toFixed(1)">
+          </div>
+          <div class="field" id="digitsField">
+            <label>Numbers per Row</label>
+            <input type="number" id="numPerRow" value="5" min="2" max="20">
+          </div>
+        </div>
+        <div style="margin-top:20px">
+          <button class="btn btn-primary" onclick="startArena()" id="startBtn">▶ Start Session</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div class="quiz-screen" id="quiz-screen">
+      <div class="quiz-header">
+        <div class="quiz-stat"><div class="val" id="q-num">1</div><div class="key">Question</div></div>
+        <div class="timer-ring" id="timerRing">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle class="bg" cx="40" cy="40" r="34"/>
+            <circle class="fg" cx="40" cy="40" r="34" id="timerCircle"
+              stroke-dasharray="213.6" stroke-dashoffset="0"/>
+          </svg>
+          <span class="num" id="q-timer">30</span>
+        </div>
+        <div class="quiz-stat"><div class="val" id="q-score">0</div><div class="key">Score</div></div>
+        <div class="quiz-stat"><div class="val" id="q-correct" style="color:var(--success)">0</div><div class="key">Correct</div></div>
+        <div class="quiz-stat"><div class="val" id="q-wrong" style="color:var(--danger)">0</div><div class="key">Wrong</div></div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+      <!-- Flash Mode -->
+      <div id="flashMode" style="display:none;">
+        <div class="question-box">
+          <div class="question-label">Flash — Add all numbers</div>
+          <div class="flash-number" id="flashNum">—</div>
+        </div>
+        <input type="number" class="answer-input" id="flashAnswer" placeholder="Your answer">
+        <div class="feedback" id="flashFeedback"></div>
+        <button class="btn btn-primary" style="margin-top:20px" onclick="submitFlash()">Submit ↩</button>
+      </div>
+
+      <!-- Regular Mode -->
+      <div id="regularMode" style="display:none;">
+        <div class="question-box">
+          <div class="question-label" id="q-label">Question</div>
+          <div class="question-text" id="q-text">12 + 34 = ?</div>
+        </div>
+        <input type="number" class="answer-input" id="q-answer" placeholder="Type your answer"
+          onkeydown="if(event.key==='Enter')submitAnswer()">
+        <div class="feedback" id="q-feedback"></div>
+        <div style="display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="submitAnswer()">Submit ↩</button>
+          <button class="btn btn-ghost btn-sm" onclick="skipQuestion()">Skip →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div class="results-screen" id="results-screen">
+      <div style="font-size:3rem;margin-bottom:8px">🎉</div>
+      <div class="results-score" id="res-score">85%</div>
+      <div class="results-grade" id="res-grade">Great Job!</div>
+      <div class="results-grid">
+        <div class="result-item"><div class="r-val" id="res-correct">8</div><div class="r-key">Correct</div></div>
+        <div class="result-item"><div class="r-val" id="res-wrong">2</div><div class="r-key">Wrong</div></div>
+        <div class="result-item"><div class="r-val" id="res-time">45s</div><div class="r-key">Time</div></div>
+        <div class="result-item"><div class="r-val" id="res-speed">4.5s</div><div class="r-key">Avg/Q</div></div>
+      </div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="restartArena()">🔄 Try Again</button>
+        <button class="btn btn-ghost" onclick="showPage('competition')">🏆 Compete</button>
+        <button class="btn btn-ghost" onclick="backToSetup()">← Change Op</button>
+      </div>
+      <div class="gs-info" style="text-align:left;margin-top:28px">
+        <h3>📊 Result Saved</h3>
+        <p>Your score has been recorded. To sync with Google Sheets, configure your Sheet ID in the Admin panel and results will auto-save via the Apps Script webhook.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════ COMPETITION ════════════════════════ -->
+<div class="page" id="page-competition">
+  <div class="comp-container">
+    <div class="comp-header-bar">
+      <div>
+        <h1 style="font-family:Syne;font-size:2rem;font-weight:800;margin-bottom:4px">Daily Competition</h1>
+        <p style="color:var(--text-muted)">Compete live — leaderboard updates in real time</p>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div class="live-badge">LIVE</div>
+        <div style="font-size:.85rem;color:var(--text-muted)">Resets at midnight</div>
+        <button class="btn btn-primary btn-sm" onclick="openModal('joinModal')">+ Join Now</button>
+      </div>
+    </div>
+
+    <!-- Competition types -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px">
+      <button class="btn btn-ghost btn-sm" onclick="filterComp('all')" id="filter-all" style="border-color:var(--accent)">All</button>
+      <button class="btn btn-ghost btn-sm" onclick="filterComp('addition')">Addition</button>
+      <button class="btn btn-ghost btn-sm" onclick="filterComp('subtraction')">Subtraction</button>
+      <button class="btn btn-ghost btn-sm" onclick="filterComp('multiplication')">Multiplication</button>
+      <button class="btn btn-ghost btn-sm" onclick="filterComp('flash')">Flash</button>
+    </div>
+
+    <!-- Today's stats -->
+    <div class="summary-cards" style="margin-bottom:28px">
+      <div class="summary-card accent">
+        <div class="sc-icon">👥</div>
+        <div class="sc-num" id="comp-total">24</div>
+        <div class="sc-lbl">Participants Today</div>
+      </div>
+      <div class="summary-card green">
+        <div class="sc-icon">⚡</div>
+        <div class="sc-num" id="comp-avg-speed">1.2s</div>
+        <div class="sc-lbl">Avg Flash Speed</div>
+      </div>
+      <div class="summary-card red">
+        <div class="sc-icon">🎯</div>
+        <div class="sc-num" id="comp-top-score">98%</div>
+        <div class="sc-lbl">Top Accuracy</div>
+      </div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="leaderboard">
+      <div class="lb-head">
+        <div>#</div>
+        <div>Student</div>
+        <div>Score</div>
+        <div>Time</div>
+        <div>Accuracy</div>
+      </div>
+      <div id="leaderboardBody"></div>
+    </div>
+
+    <div class="gs-info" style="margin-top:24px">
+      <h3>🔗 Google Sheets Integration</h3>
+      <p>Results sync to your Google Sheet in real-time via Apps Script. Each entry stores: name, class, score, timing, accuracy, type, and timestamp.</p>
+      <p style="margin-top:8px"><strong>Setup:</strong> Deploy the Apps Script below as a Web App, then add the URL to Admin → Settings → Webhook URL.</p>
+      <pre>// Google Apps Script (Code.gs)
+function doPost(e) {
+  const data = JSON.parse(e.postData.contents);
+  const sheet = SpreadsheetApp.openById(SHEET_ID)
+    .getSheetByName('Competition');
+  sheet.appendRow([
+    new Date(), data.name, data.class,
+    data.score, data.time, data.accuracy,
+    data.type, data.questions
+  ]);
+  // Auto-sort by score
+  const range = sheet.getDataRange();
+  range.sort({column:4, ascending:false});
+  return ContentService
+    .createTextOutput(JSON.stringify({status:'ok'}))
+    .setMimeType(ContentService.MimeType.JSON);
+}</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════ COURSES ════════════════════════ -->
+<div class="page" id="page-courses">
+  <div class="courses-container">
+    <h1 style="font-family:Syne;font-size:2rem;font-weight:800;margin-bottom:4px">Courses</h1>
+    <p style="color:var(--text-muted);margin-bottom:32px">Structured curriculum from beginner to expert</p>
+    <div id="coursesContainer"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════ ABACUS TOOL ════════════════════════ -->
+<div class="page" id="page-abacus">
+  <div class="abacus-container">
+    <h1 style="font-family:Syne;font-size:2rem;font-weight:800;margin-bottom:4px">Virtual Abacus</h1>
+    <p style="color:var(--text-muted);margin-bottom:32px">Click beads to move them — track the value below</p>
+
+    <div class="abacus-display" id="abacusDisplay">0</div>
+
+    <div class="abacus-frame" id="abacusFrame"></div>
+
+    <div class="abacus-controls" style="margin-top:24px">
+      <button class="btn btn-ghost" onclick="resetAbacus()">↺ Reset</button>
+      <button class="btn btn-primary" onclick="readAbacus()">Read Value</button>
+      <button class="btn btn-ghost btn-sm" onclick="abacusMode='addition';showToast('➕','Addition mode on')">+ Add Mode</button>
+    </div>
+
+    <div class="settings-panel" style="margin-top:24px;text-align:left">
+      <h3>📖 How to Use</h3>
+      <p style="color:var(--text-muted);font-size:.875rem;line-height:1.7">
+        Each column represents a place value (ones, tens, hundreds…). 
+        The <strong>upper beads</strong> count as 5; <strong>lower beads</strong> count as 1.
+        Click a bead to toggle it toward the center separator (active) or away (inactive).
+        The total value updates automatically.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════ DASHBOARD ════════════════════════ -->
+<div class="page" id="page-dashboard">
+  <div class="dash-container">
+    <div class="dash-greeting">Welcome back, <span style="color:var(--accent)" id="dashName">Student</span> 👋</div>
+    <div class="dash-sub">Here's your training overview</div>
+    <div class="dash-grid">
+      <div class="dash-card">
+        <h4>Total Score</h4>
+        <div class="big" id="dash-total-score">1,240</div>
+        <div class="change up" id="dash-score-change">↑ +80 this week</div>
+      </div>
+      <div class="dash-card">
+        <h4>Questions Solved</h4>
+        <div class="big" id="dash-questions">486</div>
+        <div class="change up">↑ +24 today</div>
+      </div>
+      <div class="dash-card">
+        <h4>Accuracy</h4>
+        <div class="big" id="dash-accuracy">87%</div>
+        <div class="change up">↑ +3% vs last week</div>
+      </div>
+      <div class="dash-card">
+        <h4>Competitions</h4>
+        <div class="big" id="dash-comps">12</div>
+        <div class="change up">↑ 3 this week</div>
+      </div>
+      <div class="dash-card">
+        <h4>Best Rank</h4>
+        <div class="big" id="dash-rank">#3</div>
+        <div class="change up">↑ Improved from #7</div>
+      </div>
+      <div class="dash-card">
+        <h4>Avg Speed</h4>
+        <div class="big" id="dash-speed">1.8s</div>
+        <div class="change down">↓ Getting faster</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;flex-wrap:wrap" class="cards-grid">
+      <div style="grid-column:1/-1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
+        <h3 style="font-family:Syne;font-weight:700;margin-bottom:20px">Recent Activity</h3>
+        <ul class="activity-feed" id="activityFeed"></ul>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
+      <h3 style="font-family:Syne;font-weight:700;margin-bottom:16px">Practice Now</h3>
+      <div style="display:flex;gap:10px;flex-wrap:wrap" id="quickOps"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════ ADMIN ════════════════════════ -->
+<div class="page" id="page-admin">
+  <div class="admin-container">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px">
+      <div>
+        <h1 style="font-family:Syne;font-size:2rem;font-weight:800;margin-bottom:4px">Admin Dashboard</h1>
+        <p style="color:var(--text-muted)">Manage users, competitions, and platform settings</p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm" onclick="simulateLiveUpdate()">🔄 Sync Now</button>
+        <button class="btn btn-danger btn-sm" onclick="resetDayData()">↺ Reset Daily</button>
+      </div>
+    </div>
+
+    <div class="summary-cards">
+      <div class="summary-card accent"><div class="sc-icon">👥</div><div class="sc-num">247</div><div class="sc-lbl">Total Users</div></div>
+      <div class="summary-card green"><div class="sc-icon">✅</div><div class="sc-num">24</div><div class="sc-lbl">Active Today</div></div>
+      <div class="summary-card red"><div class="sc-icon">🏆</div><div class="sc-num">6</div><div class="sc-lbl">Competitions</div></div>
+      <div class="summary-card blue"><div class="sc-icon">📊</div><div class="sc-num">1,486</div><div class="sc-lbl">Questions Today</div></div>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="tab-btn active" onclick="showAdminTab('users')">👥 Users</button>
+      <button class="tab-btn" onclick="showAdminTab('competitions')">🏆 Competitions</button>
+      <button class="tab-btn" onclick="showAdminTab('leaderboard')">📊 Leaderboard</button>
+      <button class="tab-btn" onclick="showAdminTab('settings')">⚙️ Settings</button>
+      <button class="tab-btn" onclick="showAdminTab('automation')">🤖 Automation</button>
+    </div>
+
+    <!-- Users Tab -->
+    <div class="tab-content active" id="tab-users">
+      <div style="display:flex;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+        <input type="text" placeholder="🔍 Search users..." style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 16px;color:var(--text);font-size:.9rem;width:260px;outline:none">
+        <button class="btn btn-primary btn-sm" onclick="openModal('addUserModal')">+ Add User</button>
+      </div>
+      <div style="overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius)">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th><th>Class</th><th>Competitions</th>
+              <th>Best Score</th><th>Accuracy</th><th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Competitions Tab -->
+    <div class="tab-content" id="tab-competitions">
+      <div style="display:flex;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+        <h3 style="font-family:Syne;font-weight:700">Today's Competitions</h3>
+        <button class="btn btn-primary btn-sm" onclick="openModal('newCompModal')">+ Create Competition</button>
+      </div>
+      <div style="overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius)">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Type</th><th>Questions</th><th>Time Limit</th><th>Participants</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="compsTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Leaderboard Tab -->
+    <div class="tab-content" id="tab-leaderboard">
+      <div style="display:flex;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+        <h3 style="font-family:Syne;font-weight:700">Today's Leaderboard</h3>
+        <button class="btn btn-danger btn-sm" onclick="resetDayData()">↺ Reset Scores</button>
+      </div>
+      <div class="leaderboard" id="adminLeaderboard"></div>
+    </div>
+
+    <!-- Settings Tab -->
+    <div class="tab-content" id="tab-settings">
+      <div class="settings-panel">
+        <h3>🔗 Google Sheets Connection</h3>
+        <div class="settings-row">
+          <div class="field" style="grid-column:1/-1">
+            <label>Google Sheet ID</label>
+            <input type="text" id="sheetId" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms" value="">
+          </div>
+          <div class="field" style="grid-column:1/-1">
+            <label>Apps Script Webhook URL</label>
+            <input type="text" id="webhookUrl" placeholder="https://script.google.com/macros/s/.../exec" value="">
+          </div>
+        </div>
+        <button class="btn btn-primary" style="margin-top:16px" onclick="saveSettings()">Save & Test Connection</button>
+      </div>
+      <div class="settings-panel" style="margin-top:16px">
+        <h3>🎨 Branding</h3>
+        <div class="settings-row">
+          <div class="field">
+            <label>App Name</label>
+            <input type="text" id="brandName" value="Abacus4You">
+          </div>
+          <div class="field">
+            <label>Accent Color</label>
+            <input type="color" id="brandColor" value="#f0a500" onchange="updateBrand(this.value)">
+          </div>
+          <div class="field">
+            <label>Tagline</label>
+            <input type="text" id="brandTagline" value="Math Mastery Platform">
+          </div>
+        </div>
+        <button class="btn btn-primary" style="margin-top:16px" onclick="applyBranding()">Apply Branding</button>
+      </div>
+    </div>
+
+    <!-- Automation Tab -->
+    <div class="tab-content" id="tab-automation">
+      <div class="gs-info">
+        <h3>🤖 Google Apps Script — Full Automation Suite</h3>
+        <p>Deploy the following scripts to automate daily resets, notifications, and leaderboard management.</p>
+        <pre>// ─── DAILY RESET TRIGGER ───
+function setupDailyReset() {
+  ScriptApp.newTrigger('resetDailyCompetition')
+    .timeBased().everyDays(1).atHour(0).create();
+}
+function resetDailyCompetition() {
+  const ss = SpreadsheetApp.openById(SHEET_ID);
+  const sheet = ss.getSheetByName('Daily');
+  // Keep header, clear data rows
+  if (sheet.getLastRow() > 1) {
+    sheet.deleteRows(2, sheet.getLastRow() - 1);
+  }
+  // Log the reset
+  ss.getSheetByName('Log').appendRow([new Date(), 'Daily reset completed']);
+}
+
+// ─── SEND EMAIL DIGEST ───
+function sendDailyDigest() {
+  const sheet = SpreadsheetApp.openById(SHEET_ID)
+    .getSheetByName('Competition');
+  const data = sheet.getDataRange().getValues();
+  const top3 = data.slice(1,4);
+  let html = '&lt;h2&gt;Today\'s Top Performers&lt;/h2&gt;';
+  top3.forEach((r,i) => {
+    html += \`&lt;p&gt;#\${i+1}: &lt;b&gt;\${r[1]}&lt;/b&gt; — Score: \${r[3]}&lt;/p&gt;\`;
+  });
+  GmailApp.sendEmail(ADMIN_EMAIL, 'Daily Math Results', '', {htmlBody: html});
+}
+
+// ─── REAL-TIME LEADERBOARD ───
+function doGet() {
+  const sheet = SpreadsheetApp.openById(SHEET_ID)
+    .getSheetByName('Competition');
+  const data = sheet.getDataRange().getValues();
+  const rows = data.slice(1).map(r => ({
+    name:r[1], class:r[2], score:r[3],
+    time:r[4], accuracy:r[5], type:r[6]
+  }));
+  return ContentService
+    .createTextOutput(JSON.stringify(rows))
+    .setMimeType(ContentService.MimeType.JSON);
+}</pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════ MODALS ════════════════════════ -->
+
+<!-- Register Modal -->
+<div class="modal-overlay" id="registerModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('registerModal')">✕</button>
+    <h2>Join Abacus4You</h2>
+    <p>Create your free account to track progress and compete daily</p>
+    <div class="reg-form">
+      <div class="input-group"><label>Full Name</label><input type="text" id="reg-name" placeholder="Enter your name"></div>
+      <div class="input-group"><label>Class / Level</label>
+        <select id="reg-class">
+          <option>Level 1 — Beginner</option>
+          <option>Level 2 — Elementary</option>
+          <option>Level 3 — Intermediate</option>
+          <option>Level 4 — Advanced</option>
+          <option>Level 5 — Expert</option>
+        </select>
+      </div>
+      <div class="input-group"><label>Email</label><input type="email" id="reg-email" placeholder="you@example.com"></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="registerUser()">Create Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- Join Competition Modal -->
+<div class="modal-overlay" id="joinModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('joinModal')">✕</button>
+    <h2>Join Competition</h2>
+    <p>Enter your details to participate in today's challenge</p>
+    <div class="reg-form">
+      <div class="input-group"><label>Your Name</label><input type="text" id="join-name" placeholder="Student name"></div>
+      <div class="input-group"><label>Class</label>
+        <select id="join-class">
+          <option>Level 1</option><option>Level 2</option><option>Level 3</option>
+          <option>Level 4</option><option>Level 5</option>
+        </select>
+      </div>
+      <div class="input-group"><label>Competition Type</label>
+        <select id="join-type">
+          <option value="addition">Flash Addition</option>
+          <option value="subtraction">Flash Subtraction</option>
+          <option value="multiplication">Multiplication</option>
+          <option value="mixed">Mixed Challenge</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="joinCompetition()">Start Competition →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal-overlay" id="addUserModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('addUserModal')">✕</button>
+    <h2>Add New User</h2>
+    <p>Manually add a student to the platform</p>
+    <div class="reg-form">
+      <div class="input-group"><label>Name</label><input type="text" placeholder="Student name"></div>
+      <div class="input-group"><label>Class</label><input type="text" placeholder="Level 1–5 or class name"></div>
+      <div class="input-group"><label>Email</label><input type="email" placeholder="student@school.com"></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="addUser()">Add Student</button>
+    </div>
+  </div>
+</div>
+
+<!-- New Competition Modal -->
+<div class="modal-overlay" id="newCompModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('newCompModal')">✕</button>
+    <h2>Create Competition</h2>
+    <p>Set parameters for today's math challenge</p>
+    <div class="reg-form">
+      <div class="input-group"><label>Type</label>
+        <select><option>Flash Addition</option><option>Flash Subtraction</option><option>Multiplication</option><option>Mixed</option></select>
+      </div>
+      <div class="input-group"><label>Number of Questions</label><input type="number" value="20" min="5" max="100"></div>
+      <div class="input-group"><label>Time Limit (seconds)</label><input type="number" value="120" min="30"></div>
+      <div class="input-group"><label>Flash Speed (seconds)</label><input type="number" value="1.0" step="0.1" min="0.1"></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="createComp()">Create & Activate</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toast-icon">✓</span>
+  <span class="toast-text" id="toast-text">Action completed</span>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  DATA
+// ══════════════════════════════════════════════
+const OPERATIONS = [
+  { id:'addition', icon:'➕', name:'Addition', symbol:'+' },
+  { id:'subtraction', icon:'➖', name:'Subtraction', symbol:'-' },
+  { id:'multiplication', icon:'✖', name:'Multiplication', symbol:'×' },
+  { id:'division', icon:'➗', name:'Division', symbol:'÷' },
+  { id:'flash', icon:'⚡', name:'Flash', symbol:'flash' },
+  { id:'decimal', icon:'🔢', name:'Decimal', symbol:'.' },
+  { id:'square', icon:'²', name:'Square', symbol:'²' },
+  { id:'cube', icon:'³', name:'Cube', symbol:'³' },
+  { id:'squareroot', icon:'√', name:'Sq. Root', symbol:'√' },
+  { id:'percentage', icon:'%', name:'Percentage', symbol:'%' },
+  { id:'lcm', icon:'🔗', name:'LCM', symbol:'lcm' },
+  { id:'hcf', icon:'⛓', name:'HCF/GCD', symbol:'hcf' },
+];
+
+const COURSES = [
+  { icon:'🔤', title:'Abacus Level 1 — Foundation', desc:'Learn the abacus structure, bead values, and basic number representation. Perfect for beginners.', lessons:12, duration:'4 weeks', level:'Beginner', progress:100 },
+  { icon:'➕', title:'Single-Digit Addition & Subtraction', desc:'Master the friend-of-five and friend-of-ten methods for lightning-fast mental calculation.', lessons:18, duration:'6 weeks', level:'Beginner', progress:75 },
+  { icon:'⚡', title:'Flash Anzan — Introduction', desc:'Train your brain to visualize the abacus mentally with numbers flashing at 2-second speed.', lessons:20, duration:'8 weeks', level:'Intermediate', progress:40 },
+  { icon:'✖', title:'Multiplication Mastery', desc:'Speed tables, cross-multiplication, and the lattice method for 2-digit and 3-digit multiplication.', lessons:24, duration:'10 weeks', level:'Intermediate', progress:10 },
+  { icon:'💯', title:'Percentage & Ratio', desc:'Calculate percentages, discounts, and ratios mentally with abacus visualization techniques.', lessons:16, duration:'6 weeks', level:'Intermediate', progress:0 },
+  { icon:'🏆', title:'Competition Preparation', desc:'Advanced flash speeds (0.5s and below), mixed operations, and competitive strategy drills.', lessons:30, duration:'12 weeks', level:'Expert', progress:0 },
+];
+
+const MOCK_LEADERBOARD = [
+  { name:'Aarav Shah', class:'Level 5', score:980, time:'1:24', accuracy:98, type:'Flash Addition' },
+  { name:'Priya Patel', class:'Level 4', score:920, time:'1:37', accuracy:94, type:'Multiplication' },
+  { name:'Rohan Kumar', class:'Level 5', score:890, time:'1:41', accuracy:91, type:'Flash Addition' },
+  { name:'Sanya Singh', class:'Level 3', score:840, time:'2:05', accuracy:88, type:'Mixed' },
+  { name:'Dev Mehta', class:'Level 4', score:810, time:'2:12', accuracy:85, type:'Flash Subtraction' },
+  { name:'Ananya Roy', class:'Level 3', score:780, time:'2:28', accuracy:82, type:'Subtraction' },
+  { name:'Vikram Nair', class:'Level 2', score:720, time:'2:44', accuracy:78, type:'Addition' },
+  { name:'Ishaan Joshi', class:'Level 2', score:680, time:'3:01', accuracy:72, type:'Addition' },
+];
+
+const MOCK_USERS = [
+  { name:'Aarav Shah', class:'Level 5', comps:24, best:980, acc:97, active:true },
+  { name:'Priya Patel', class:'Level 4', comps:19, best:920, acc:94, active:true },
+  { name:'Rohan Kumar', class:'Level 5', comps:22, best:890, acc:91, active:true },
+  { name:'Sanya Singh', class:'Level 3', comps:15, best:840, acc:88, active:true },
+  { name:'Dev Mehta', class:'Level 4', comps:18, best:810, acc:85, active:false },
+  { name:'Ananya Roy', class:'Level 3', comps:11, best:780, acc:82, active:true },
+];
+
+const MOCK_COMPS = [
+  { type:'Flash Addition', questions:20, time:120, participants:18, status:'active' },
+  { type:'Multiplication', questions:15, time:90, participants:12, status:'active' },
+  { type:'Mixed Challenge', questions:25, time:150, participants:8, status:'active' },
+  { type:'Flash Subtraction', questions:20, time:120, participants:0, status:'pending' },
+];
+
+const ACTIVITIES = [
+  { dot:'gold', text:'Completed Flash Addition — 18/20 correct', time:'12 mins ago' },
+  { dot:'green', text:'Ranked #3 in today\'s competition', time:'1 hour ago' },
+  { dot:'gold', text:'Multiplication session — 95% accuracy', time:'2 hours ago' },
+  { dot:'red', text:'Missed 3 questions in Subtraction drill', time:'Yesterday' },
+  { dot:'green', text:'Course milestone: Level 3 Flash Anzan unlocked', time:'Yesterday' },
+  { dot:'gold', text:'Personal best: 0.8s flash speed achieved', time:'2 days ago' },
+];
+
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+let currentUser = { name:'Student', class:'Level 3' };
+let selectedOp = null;
+let quizState = {};
+let abacusBeads = [];
+let adminActiveTab = 'users';
+let liveLeaderboard = [...MOCK_LEADERBOARD];
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  renderHomeOps();
+  renderArenaOps();
+  renderLeaderboard(liveLeaderboard);
+  renderCourses();
+  renderAbacus();
+  renderDashboard();
+  renderAdminUsers();
+  renderAdminComps();
+  renderAdminLeaderboard();
+  renderQuickOps();
+  startLiveSimulation();
+});
+
+// ══════════════════════════════════════════════
+//  NAV
+// ══════════════════════════════════════════════
+function showPage(p) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('[id^="nav-"]').forEach(el => el.classList.remove('active'));
+  document.getElementById('page-' + p).classList.add('active');
+  const nb = document.getElementById('nav-' + p);
+  if (nb) nb.classList.add('active');
+  window.scrollTo(0,0);
+}
+function toggleMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+// ══════════════════════════════════════════════
+//  HOME OPS
+// ══════════════════════════════════════════════
+function renderHomeOps() {
+  const g = document.getElementById('homeOpCards');
+  g.innerHTML = OPERATIONS.map(op => `
+    <div class="card" onclick="selectOpAndGo('${op.id}')">
+      <div class="card-icon">${op.icon}</div>
+      <h3>${op.name}</h3>
+      <p>Practice ${op.name.toLowerCase()} with customizable settings and real-time scoring.</p>
+      <span class="card-tag">→ Practice</span>
+    </div>`).join('');
+}
+
+function selectOpAndGo(opId) {
+  showPage('arena');
+  setTimeout(() => selectOp(opId), 100);
+}
+
+// ══════════════════════════════════════════════
+//  ARENA
+// ══════════════════════════════════════════════
+function renderArenaOps() {
+  const g = document.getElementById('arenaOpsGrid');
+  g.innerHTML = OPERATIONS.map(op => `
+    <div class="op-btn" id="op-${op.id}" onclick="selectOp('${op.id}')">
+      <span class="op-icon">${op.icon}</span>
+      <span class="op-name">${op.name}</span>
+    </div>`).join('');
+}
+
+function selectOp(id) {
+  selectedOp = OPERATIONS.find(o => o.id === id);
+  document.querySelectorAll('.op-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('op-' + id).classList.add('selected');
+  document.getElementById('selectedOpLabel').textContent = '— ' + selectedOp.name;
+  const isFlash = id === 'flash';
+  document.getElementById('flashSpeedField').style.display = isFlash ? '' : 'none';
+  document.getElementById('digitsField').style.display = isFlash ? '' : 'none';
+}
+
+function startArena() {
+  if (!selectedOp) { showToast('⚠️','Please select an operation first'); return; }
+  const settings = {
+    op: selectedOp,
+    minVal: +document.getElementById('minVal').value || 1,
+    maxVal: +document.getElementById('maxVal').value || 99,
+    numQ: +document.getElementById('numQuestions').value || 10,
+    timeLimit: +document.getElementById('timeLimit').value || 30,
+    flashSpeed: +document.getElementById('flashSpeed').value || 1.0,
+    numPerRow: +document.getElementById('numPerRow').value || 5,
+  };
+  initQuiz(settings);
+}
+
+function initQuiz(settings) {
+  quizState = {
+    settings, q:0, score:0, correct:0, wrong:0,
+    startTime: Date.now(), timer: settings.timeLimit,
+    questions: generateQuestions(settings),
+    timerInterval: null,
+  };
+  document.getElementById('arena-setup').style.display = 'none';
+  document.getElementById('results-screen').classList.remove('active');
+  document.getElementById('quiz-screen').classList.add('active');
+  document.getElementById('flashMode').style.display = settings.op.id === 'flash' ? '' : 'none';
+  document.getElementById('regularMode').style.display = settings.op.id !== 'flash' ? '' : 'none';
+  updateQuizHeader();
+  if (settings.op.id === 'flash') startFlashRound();
+  else loadQuestion();
+  startTimer();
+}
+
+function generateQuestions(s) {
+  const qs = [];
+  for (let i=0;i<s.numQ;i++) {
+    const a = rand(s.minVal, s.maxVal);
+    const b = rand(s.minVal, s.maxVal);
+    let q, ans;
+    switch(s.op.id) {
+      case 'addition': q=`${a} + ${b}`; ans=a+b; break;
+      case 'subtraction': const [big,sml]=[Math.max(a,b),Math.min(a,b)]; q=`${big} − ${sml}`; ans=big-sml; break;
+      case 'multiplication': q=`${a} × ${b}`; ans=a*b; break;
+      case 'division': const c=rand(1,12),d=rand(1,12); q=`${c*d} ÷ ${c}`; ans=d; break;
+      case 'square': q=`${a}²`; ans=a*a; break;
+      case 'cube': const e=rand(s.minVal,Math.min(s.maxVal,20)); q=`${e}³`; ans=e**3; break;
+      case 'squareroot': const sq=rand(1,20); q=`√${sq*sq}`; ans=sq; break;
+      case 'percentage': q=`${a}% of ${b*10}`; ans=Math.round(a*b*10/100); break;
+      case 'decimal': q=`${(a/10).toFixed(1)} + ${(b/10).toFixed(1)}`; ans=+((a+b)/10).toFixed(1); break;
+      case 'lcm': q=`LCM(${a}, ${b})`; ans=lcm(a,b); break;
+      case 'hcf': q=`HCF(${a}, ${b})`; ans=gcd(a,b); break;
+      default: q=`${a} + ${b}`; ans=a+b;
+    }
+    qs.push({ q, ans });
+  }
+  return qs;
+}
+
+function loadQuestion() {
+  const {q,s}=quizState, qt=s.questions[s.q];
+  document.getElementById('q-text').textContent = qt.q + ' = ?';
+  document.getElementById('q-label').textContent = `${s.op.name} — Question ${s.q+1} of ${s.numQ}`;
+  document.getElementById('q-answer').value = '';
+  document.getElementById('q-answer').className = 'answer-input';
+  document.getElementById('q-feedback').textContent = '';
+  document.getElementById('q-answer').focus();
+  const p = (s.q / s.numQ) * 100;
+  document.getElementById('progressFill').style.width = p + '%';
+}
+
+function submitAnswer() {
+  const s = quizState.settings, q = quizState;
+  const inp = document.getElementById('q-answer');
+  const val = parseFloat(inp.value);
+  if (isNaN(val)) return;
+  const correct = q.questions[q.q].ans;
+  const isRight = Math.abs(val - correct) < 0.01;
+  inp.className = 'answer-input ' + (isRight ? 'correct' : 'wrong');
+  const fb = document.getElementById('q-feedback');
+  fb.className = 'feedback ' + (isRight ? 'correct' : 'wrong');
+  fb.textContent = isRight ? '✓ Correct!' : `✗ Answer: ${correct}`;
+  if (isRight) { quizState.correct++; quizState.score += 10; }
+  else quizState.wrong++;
+  updateQuizHeader();
+  setTimeout(() => {
+    quizState.q++;
+    if (quizState.q >= s.numQ) endQuiz();
+    else loadQuestion();
+  }, 800);
+}
+
+function skipQuestion() {
+  quizState.wrong++;
+  quizState.q++;
+  updateQuizHeader();
+  if (quizState.q >= quizState.settings.numQ) endQuiz();
+  else loadQuestion();
+}
+
+function updateQuizHeader() {
+  const q = quizState;
+  document.getElementById('q-num').textContent = (q.q + 1) + ' / ' + q.settings.numQ;
+  document.getElementById('q-score').textContent = q.score;
+  document.getElementById('q-correct').textContent = q.correct;
+  document.getElementById('q-wrong').textContent = q.wrong;
+}
+
+function startTimer() {
+  quizState.timer = quizState.settings.timeLimit;
+  quizState.timerInterval = setInterval(() => {
+    quizState.timer--;
+    document.getElementById('q-timer').textContent = quizState.timer;
+    const pct = quizState.timer / quizState.settings.timeLimit;
+    const circ = document.getElementById('timerCircle');
+    if (circ) circ.style.strokeDashoffset = 213.6 * (1 - pct);
+    if (quizState.timer <= 0) { clearInterval(quizState.timerInterval); endQuiz(); }
+  }, 1000);
+}
+
+function endQuiz() {
+  if (quizState.timerInterval) clearInterval(quizState.timerInterval);
+  document.getElementById('quiz-screen').classList.remove('active');
+  document.getElementById('results-screen').classList.add('active');
+  const q = quizState;
+  const elapsed = Math.round((Date.now() - q.startTime) / 1000);
+  const total = q.settings.numQ;
+  const pct = Math.round((q.correct / total) * 100);
+  document.getElementById('res-score').textContent = pct + '%';
+  document.getElementById('res-grade').textContent = pct>=90?'🏆 Excellent!':pct>=75?'👍 Great Job!':pct>=60?'👌 Good Effort':'📚 Keep Practicing';
+  document.getElementById('res-correct').textContent = q.correct;
+  document.getElementById('res-wrong').textContent = q.wrong;
+  document.getElementById('res-time').textContent = elapsed + 's';
+  document.getElementById('res-speed').textContent = (elapsed / total).toFixed(1) + 's';
+  showToast('🏆', `Session complete — ${pct}% accuracy!`);
+}
+
+function restartArena() {
+  document.getElementById('results-screen').classList.remove('active');
+  initQuiz(quizState.settings);
+}
+
+function backToSetup() {
+  document.getElementById('results-screen').classList.remove('active');
+  document.getElementById('quiz-screen').classList.remove('active');
+  document.getElementById('arena-setup').style.display = '';
+}
+
+// Flash Mode
+let flashTimeout;
+let flashNumbers = [];
+let flashIndex = 0;
+
+function startFlashRound() {
+  const s = quizState.settings;
+  flashNumbers = [];
+  let total = 0;
+  for (let i=0;i<s.numPerRow;i++) {
+    const n = rand(s.minVal, s.maxVal) * (Math.random() > .5 ? 1 : -1);
+    flashNumbers.push(n); total += n;
+  }
+  quizState.questions[quizState.q] = { q: flashNumbers.join(' + '), ans: total };
+  flashIndex = 0;
+  showFlashNum();
+}
+
+function showFlashNum() {
+  if (flashIndex >= flashNumbers.length) {
+    document.getElementById('flashNum').textContent = '?';
+    document.getElementById('flashAnswer').style.display = '';
+    document.getElementById('flashAnswer').focus();
+    return;
+  }
+  document.getElementById('flashNum').textContent = flashNumbers[flashIndex];
+  flashIndex++;
+  flashTimeout = setTimeout(showFlashNum, quizState.settings.flashSpeed * 1000);
+}
+
+function submitFlash() {
+  const val = parseFloat(document.getElementById('flashAnswer').value);
+  const correct = quizState.questions[quizState.q].ans;
+  const isRight = !isNaN(val) && Math.abs(val - correct) < 0.01;
+  const fb = document.getElementById('flashFeedback');
+  fb.className = 'feedback ' + (isRight ? 'correct' : 'wrong');
+  fb.textContent = isRight ? '✓ Correct!' : `✗ Answer: ${correct}`;
+  if (isRight) { quizState.correct++; quizState.score += 10; }
+  else quizState.wrong++;
+  quizState.q++;
+  updateQuizHeader();
+  setTimeout(() => {
+    if (quizState.q >= quizState.settings.numQ) endQuiz();
+    else { document.getElementById('flashAnswer').value=''; startFlashRound(); }
+  }, 900);
+}
+
+// ══════════════════════════════════════════════
+//  COMPETITION
+// ══════════════════════════════════════════════
+function renderLeaderboard(data) {
+  const body = document.getElementById('leaderboardBody');
+  body.innerHTML = data.map((r,i) => {
+    const accClass = r.accuracy>=90?'acc-high':r.accuracy>=75?'acc-mid':'acc-low';
+    const rankClass = i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-other';
+    return `<div class="lb-row">
+      <div><div class="rank-badge ${rankClass}">${i+1}</div></div>
+      <div><div class="player-name">${r.name}</div><div class="player-sub">${r.class} · ${r.type}</div></div>
+      <div class="score-val">${r.score}</div>
+      <div class="time-val">${r.time}</div>
+      <div><span class="acc-pill ${accClass}">${r.accuracy}%</span></div>
+    </div>`;
+  }).join('');
+  document.getElementById('comp-total').textContent = data.length;
+  if (data.length) {
+    document.getElementById('comp-top-score').textContent = Math.max(...data.map(r=>r.accuracy)) + '%';
+  }
+}
+
+function filterComp(type) {
+  document.querySelectorAll('[id^="filter-"]').forEach(b => b.style.borderColor='');
+  if (type === 'all') {
+    renderLeaderboard(liveLeaderboard);
+    document.getElementById('filter-all').style.borderColor='var(--accent)';
+  } else {
+    renderLeaderboard(liveLeaderboard.filter(r => r.type.toLowerCase().includes(type)));
+  }
+}
+
+function joinCompetition() {
+  const name = document.getElementById('join-name').value.trim();
+  const cls = document.getElementById('join-class').value;
+  const type = document.getElementById('join-type').value;
+  if (!name) { showToast('⚠️','Please enter your name'); return; }
+  closeModal('joinModal');
+  currentUser = { name, class: cls };
+  document.getElementById('dashName').textContent = name;
+  selectedOp = OPERATIONS.find(o => o.id === type.split(' ')[0].toLowerCase()) || OPERATIONS[0];
+  showPage('arena');
+  showToast('🏆', `Joining ${type} competition!`);
+  setTimeout(() => {
+    document.querySelectorAll('.op-btn').forEach(b=>b.classList.remove('selected'));
+    const opEl = document.getElementById('op-' + selectedOp.id);
+    if (opEl) opEl.classList.add('selected');
+    document.getElementById('selectedOpLabel').textContent = '— ' + selectedOp.name;
+    startArena();
+  }, 500);
+}
+
+function startLiveSimulation() {
+  setInterval(() => {
+    if (Math.random() > 0.7) simulateLiveUpdate();
+  }, 8000);
+}
+
+function simulateLiveUpdate() {
+  const names = ['Kiran Rao','Meera Gupta','Arjun Das','Kavya Iyer','Tanvi Sharma'];
+  const types = ['Flash Addition','Multiplication','Mixed Challenge','Flash Subtraction'];
+  const newEntry = {
+    name: names[Math.floor(Math.random()*names.length)],
+    class: 'Level ' + (Math.floor(Math.random()*5)+1),
+    score: Math.floor(Math.random()*300)+600,
+    time: `${Math.floor(Math.random()*2)+1}:${String(Math.floor(Math.random()*60)).padStart(2,'0')}`,
+    accuracy: Math.floor(Math.random()*30)+65,
+    type: types[Math.floor(Math.random()*types.length)],
+  };
+  liveLeaderboard.push(newEntry);
+  liveLeaderboard.sort((a,b) => b.score - a.score);
+  liveLeaderboard = liveLeaderboard.slice(0, 12);
+  renderLeaderboard(liveLeaderboard);
+  renderAdminLeaderboard();
+  if (document.getElementById('page-competition').classList.contains('active')) {
+    showToast('📊', `${newEntry.name} just scored ${newEntry.score}!`);
+  }
+}
+
+// ══════════════════════════════════════════════
+//  COURSES
+// ══════════════════════════════════════════════
+function renderCourses() {
+  const c = document.getElementById('coursesContainer');
+  c.innerHTML = COURSES.map(course => `
+    <div class="course-card" onclick="showToast('📖','${course.title} — opening lesson')">
+      <div class="course-icon">${course.icon}</div>
+      <div class="course-info" style="flex:1">
+        <h3>${course.title}</h3>
+        <p>${course.desc}</p>
+        <div class="course-meta">
+          <span class="meta-tag">📚 ${course.lessons} lessons</span>
+          <span class="meta-tag">⏱ ${course.duration}</span>
+          <span class="meta-tag">📊 ${course.level}</span>
+        </div>
+        <div class="course-progress">
+          <div class="course-progress-bar">
+            <div class="course-progress-fill" style="width:${course.progress}%"></div>
+          </div>
+          <div class="progress-label">${course.progress}% complete</div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════════
+//  ABACUS
+// ══════════════════════════════════════════════
+const COLS = 7; // columns (ones to millions)
+const UPPER = 1; // upper beads per column (value 5)
+const LOWER = 4; // lower beads per column (value 1)
+
+function renderAbacus() {
+  const frame = document.getElementById('abacusFrame');
+  // abacusBeads[col] = { upper:[bool], lower:[bool] }
+  abacusBeads = [];
+  for (let c=0;c<COLS;c++) {
+    abacusBeads[c] = { upper:[false], lower:[false,false,false,false] };
+  }
+  const placeValues = ['M','HT','TT','T','H','T','O'];
+  frame.innerHTML = '';
+  const rowDiv = document.createElement('div');
+  rowDiv.className = 'abacus-rod-row';
+  for (let c=0;c<COLS;c++) {
+    const rod = document.createElement('div');
+    rod.className = 'abacus-rod';
+    // Upper bead
+    const ub = document.createElement('div');
+    ub.className = 'abacus-bead off';
+    ub.dataset.col = c; ub.dataset.type = 'upper'; ub.dataset.idx = 0;
+    ub.onclick = () => toggleBead(c, 'upper', 0);
+    rod.appendChild(ub);
+    // Separator
+    const sep = document.createElement('div');
+    sep.className = 'rod-separator';
+    rod.appendChild(sep);
+    // Lower beads
+    for (let i=0;i<LOWER;i++) {
+      const lb = document.createElement('div');
+      lb.className = 'abacus-bead off';
+      lb.dataset.col = c; lb.dataset.type = 'lower'; lb.dataset.idx = i;
+      lb.onclick = () => toggleBead(c, 'lower', i);
+      rod.appendChild(lb);
+    }
+    // Label
+    const lbl = document.createElement('div');
+    lbl.className = 'rod-label';
+    lbl.textContent = placeValues[c];
+    rod.appendChild(lbl);
+    rowDiv.appendChild(rod);
+  }
+  frame.appendChild(rowDiv);
+  updateAbacusDisplay();
+}
+
+function toggleBead(col, type, idx) {
+  abacusBeads[col][type][idx] = !abacusBeads[col][type][idx];
+  // Update DOM bead
+  const beads = document.querySelectorAll(`[data-col="${col}"][data-type="${type}"][data-idx="${idx}"]`);
+  beads.forEach(b => b.classList.toggle('off', !abacusBeads[col][type][idx]));
+  updateAbacusDisplay();
+}
+
+function updateAbacusDisplay() {
+  let total = 0;
+  const placeMultipliers = [1000000,100000,10000,1000,100,10,1];
+  for (let c=0;c<COLS;c++) {
+    const place = placeMultipliers[c];
+    const upperVal = abacusBeads[c].upper[0] ? 5 * place : 0;
+    const lowerVal = abacusBeads[c].lower.filter(Boolean).length * place;
+    total += upperVal + lowerVal;
+  }
+  document.getElementById('abacusDisplay').textContent = total.toLocaleString();
+}
+
+function readAbacus() {
+  const val = document.getElementById('abacusDisplay').textContent;
+  showToast('🔢', `Abacus value: ${val}`);
+}
+
+function resetAbacus() {
+  for (let c=0;c<COLS;c++) {
+    abacusBeads[c] = { upper:[false], lower:[false,false,false,false] };
+  }
+  document.querySelectorAll('.abacus-bead').forEach(b => b.classList.add('off'));
+  updateAbacusDisplay();
+}
+
+// ══════════════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════════════
+function renderDashboard() {
+  const feed = document.getElementById('activityFeed');
+  feed.innerHTML = ACTIVITIES.map(a => `
+    <li class="activity-item">
+      <div class="activity-dot ${a.dot}"></div>
+      <div>
+        <div class="activity-text">${a.text}</div>
+        <div class="activity-time">${a.time}</div>
+      </div>
+    </li>`).join('');
+}
+
+function renderQuickOps() {
+  const c = document.getElementById('quickOps');
+  c.innerHTML = OPERATIONS.slice(0,6).map(op => `
+    <button class="btn btn-ghost btn-sm" onclick="selectOpAndGo('${op.id}')">
+      ${op.icon} ${op.name}
+    </button>`).join('');
+}
+
+// ══════════════════════════════════════════════
+//  ADMIN
+// ══════════════════════════════════════════════
+function showAdminTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.classList.add('active');
+  adminActiveTab = tab;
+}
+
+function renderAdminUsers() {
+  document.getElementById('usersTable').innerHTML = MOCK_USERS.map(u => `
+    <tr>
+      <td><strong>${u.name}</strong></td>
+      <td>${u.class}</td>
+      <td>${u.comps}</td>
+      <td><span style="color:var(--accent);font-weight:700">${u.best}</span></td>
+      <td>${u.acc}%</td>
+      <td><span class="status-pill ${u.active?'status-active':'status-inactive'}">${u.active?'Active':'Inactive'}</span></td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="showToast('👤','Viewing ${u.name}')">View</button>
+        <button class="btn btn-ghost btn-sm" onclick="showToast('✏️','Editing ${u.name}')">Edit</button>
+      </td>
+    </tr>`).join('');
+}
+
+function renderAdminComps() {
+  document.getElementById('compsTable').innerHTML = MOCK_COMPS.map(c => `
+    <tr>
+      <td><strong>${c.type}</strong></td>
+      <td>${c.questions} Qs</td>
+      <td>${c.time}s</td>
+      <td>${c.participants}</td>
+      <td><span class="status-pill ${c.status==='active'?'status-active':'status-inactive'}">${c.status}</span></td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="showToast('⚙️','Editing competition')">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="showToast('🗑️','Competition deleted')">Delete</button>
+      </td>
+    </tr>`).join('');
+}
+
+function renderAdminLeaderboard() {
+  const lb = document.getElementById('adminLeaderboard');
+  if (!lb) return;
+  lb.innerHTML = `
+    <div class="lb-head">
+      <div>#</div><div>Student</div><div>Score</div><div>Time</div><div>Accuracy</div>
+    </div>` + liveLeaderboard.slice(0,8).map((r,i) => {
+    const accClass = r.accuracy>=90?'acc-high':r.accuracy>=75?'acc-mid':'acc-low';
+    const rankClass = i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-other';
+    return `<div class="lb-row">
+      <div><div class="rank-badge ${rankClass}">${i+1}</div></div>
+      <div><div class="player-name">${r.name}</div><div class="player-sub">${r.class}</div></div>
+      <div class="score-val">${r.score}</div>
+      <div class="time-val">${r.time}</div>
+      <div><span class="acc-pill ${accClass}">${r.accuracy}%</span></div>
+    </div>`;
+  }).join('');
+}
+
+function resetDayData() {
+  liveLeaderboard = [];
+  renderLeaderboard([]);
+  renderAdminLeaderboard();
+  showToast('↺', 'Daily data reset successfully');
+}
+
+function saveSettings() {
+  const sheetId = document.getElementById('sheetId').value;
+  const webhook = document.getElementById('webhookUrl').value;
+  if (!sheetId && !webhook) { showToast('⚠️','Please enter Sheet ID or Webhook URL'); return; }
+  showToast('✓', 'Settings saved — testing connection...');
+  if (webhook) {
+    setTimeout(() => showToast('🔗', 'Webhook connected!'), 1500);
+  }
+}
+
+function applyBranding() {
+  const name = document.getElementById('brandName').value;
+  const color = document.getElementById('brandColor').value;
+  document.documentElement.style.setProperty('--accent', color);
+  document.querySelector('.nav-logo').innerHTML = name + '<span> ✦</span>';
+  showToast('🎨', 'Branding applied!');
+}
+
+function updateBrand(c) {
+  document.documentElement.style.setProperty('--accent', c);
+}
+
+function addUser() { closeModal('addUserModal'); showToast('👤','User added successfully!'); }
+function createComp() { closeModal('newCompModal'); showToast('🏆','Competition created and activated!'); }
+
+// ══════════════════════════════════════════════
+//  MODALS
+// ══════════════════════════════════════════════
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+function registerUser() {
+  const name = document.getElementById('reg-name').value.trim();
+  const cls = document.getElementById('reg-class').value;
+  const email = document.getElementById('reg-email').value.trim();
+  if (!name) { showToast('⚠️','Please enter your name'); return; }
+  currentUser = { name, class: cls, email };
+  closeModal('registerModal');
+  document.getElementById('dashName').textContent = name;
+  showToast('🎉', `Welcome, ${name}! Account created.`);
+  setTimeout(() => showPage('dashboard'), 800);
+}
+
+// ══════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════
+let toastTimeout;
+function showToast(icon, text) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-icon').textContent = icon;
+  document.getElementById('toast-text').textContent = text;
+  t.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ══════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════
+function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+function lcm(a, b) { return (a * b) / gcd(a, b); }
+</script>
+</body>
+</html>
